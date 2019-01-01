@@ -25,18 +25,21 @@ visited = []
 queue = deque()
 queue.append((1, 0))
 parts[0].append(1)
+visited.append(1)
 try:
     while len(queue) != 0:
         entry = queue.popleft()
         node = entry[0]
-        visited.append(node)
         myPart = entry[1]
         anotherPart = (myPart + 1) % 2
         for neighbourIdx in adjacency_lists[node]:
+            if neighbourIdx in parts[anotherPart]:
+                continue
             if neighbourIdx in parts[myPart]:
                 raise NotBipartite()
             if neighbourIdx not in visited:
                 queue.append((neighbourIdx, anotherPart))
+                visited.append(neighbourIdx)
                 parts[anotherPart].append(neighbourIdx)
 except NotBipartite:
     with open("out.txt", "w", encoding="utf-8") as file:
@@ -46,7 +49,7 @@ except NotBipartite:
 parts[0].sort()
 parts[1].sort()
 
-res = "Y "
+res = "Y\n"
 for node in parts[0]:
     res += str(node) + " "
 res += "0 "
